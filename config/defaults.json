@@ -1,0 +1,14 @@
+{
+  "title": "SSH",
+  "subtitle": "Browser terminals",
+  "theme": { "name": "ssh-hub" },
+  "links": [
+    {
+      "id": "example-terminal",
+      "label": "Example terminal",
+      "url": "https://terminal.example.com",
+      "description": "Example browser terminal",
+      "tags": ["example"]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+services:
+  ssh-hub:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    environment:
+      SSHHUB_TITLE: SSH
+      SSHHUB_SUBTITLE: Browser terminals
+      SSHHUB_LINKS: >-
+        [{"id":"example-terminal","label":"Example terminal","url":"https://terminal.example.com",
+          "description":"Example browser terminal","tags":["example"]}]
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      timeout: 3s
+      retries: 3

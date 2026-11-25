@@ -1,0 +1,34 @@
+{
+  "name": "ssh-hub",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "lint": "eslint .",
+    "check:config": "node scripts/check-config.mjs"
+  },
+  "dependencies": {
+    "culori": "^4.0.2",
+    "reka-ui": "^2.11.0",
+    "vue": "^3.5.46"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/culori": "^4.0.1",
+    "@vitejs/plugin-vue": "^6.0.11",
+    "daisyui": "^5.8.2",
+    "eslint": "^10.15.0",
+    "eslint-plugin-vue": "^10.12.1",
+    "tailwindcss": "^4.3.5",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.74.0",
+    "vite": "^8.3.8",
+    "vue-tsc": "^3.3.14"
+  }
+}

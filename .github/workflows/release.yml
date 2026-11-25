@@ -1,0 +1,56 @@
+name: Publish container image
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    if: github.repository == 'rothzeta/ssh-hub'
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/rothzeta/ssh-hub
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Log in to GHCR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s\n' "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+      - name: Build and push
+        shell: bash
+        run: |
+          refs=("$IMAGE:sha-${GITHUB_SHA:0:7}")
+          if [[ $GITHUB_REF_TYPE == tag ]]; then
+            version=${GITHUB_REF_NAME#v}
+            if [[ ! $version =~ ^([0-9]+\.[0-9]+)\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+              printf 'Expected a vX.Y.Z version tag, got %s\n' "$GITHUB_REF_NAME" >&2
+              exit 1
+            fi
+            refs+=("$IMAGE:$version" "$IMAGE:${BASH_REMATCH[1]}")
+          else
+            refs+=("$IMAGE:edge")
+          fi
+
+          docker build \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --tag "${refs[0]}" .
+          for ref in "${refs[@]:1}"; do
+            docker tag "${refs[0]}" "$ref"
+          done
+          for ref in "${refs[@]}"; do
+            docker push "$ref"
+            printf '\nPushed %s\n' "$ref"
+            docker buildx imagetools inspect "$ref"
+          done
